@@ -1,0 +1,45 @@
+{
+  "name": "lrucache",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "npm run test:unit",
+    "test:unit": "LOG_LEVEL=silent jest --env node -c jest.config.unit.js",
+    "lint": "eslint ."
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^7.13.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "husky": "^4.3.0",
+    "jest": "^26.6.3",
+    "eslint-config-prettier": "^6.12.0",
+    "eslint-plugin-jest": "^24.1.0",
+    "prettier-eslint": "^11.0.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "es6": true,
+      "jest/globals": true,
+      "node": true
+    },
+    "plugins": [
+      "jest",
+      "prettier"
+    ],
+    "extends": [
+      "plugin:prettier/recommended",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 2018
+    }
+  },
+  "eslintIgnore": [
+    "node_modules/*"
+  ]
+}
