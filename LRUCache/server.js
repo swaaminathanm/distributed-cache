@@ -36,7 +36,7 @@ const handlePut = (data = {}, socket) => {
   }
 };
 
-const handleGet = async (data = {}, socket) => {
+const handleGet = (data = {}, socket) => {
   const key = data.key;
 
   if (!key) {
@@ -48,7 +48,7 @@ const handleGet = async (data = {}, socket) => {
 };
 
 const connectionListener = (socket) => {
-  socket.on("data", async (socketData) => {
+  socket.on("data", (socketData) => {
     try {
       const dataJson = JSON.parse(socketData);
       const data = dataJson.data;
@@ -57,7 +57,7 @@ const connectionListener = (socket) => {
       if (type === "PUT") {
         handlePut(data, socket);
       } else if (type === "GET") {
-        await handleGet(data, socket);
+        handleGet(data, socket);
       } else {
         writeError(socket, "Unrecognized type. Only GET and PUT supported.");
       }
