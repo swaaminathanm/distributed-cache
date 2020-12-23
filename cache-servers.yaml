@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cache
+  labels:
+    app: cache
+spec:
+  ports:
+    - port: 8080
+      name: cache
+  clusterIP: None
+  selector:
+    app: cache
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: cache
+spec:
+  selector:
+    matchLabels:
+      app: cache
+  serviceName: "cache"
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: cache
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: cache
+          image: swaminathanmuthuveerappan/lru_cache:1.0
+          ports:
+            - containerPort: 8080

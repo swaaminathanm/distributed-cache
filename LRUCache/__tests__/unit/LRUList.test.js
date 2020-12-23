@@ -42,7 +42,7 @@ describe("LRUList Tests", () => {
   });
 
   it("should move element to head when existing element is added to the list and remove existing element if it's the last element in list", () => {
-    const lruList = new LRUList();
+    let lruList = new LRUList();
     lruList.add(1);
     lruList.add(2);
     lruList.add(3);
@@ -50,6 +50,13 @@ describe("LRUList Tests", () => {
     expect(lruList.getHead()).toBe(1);
     expect(lruList.getTail()).toBe(2);
     expect(lruList.getSize()).toBe(3);
+
+    lruList = new LRUList();
+    lruList.add(1);
+    lruList.add(1);
+    expect(lruList.getHead()).toBe(1);
+    expect(lruList.getTail()).toBe(1);
+    expect(lruList.getSize()).toBe(1);
   });
 
   it("should move element to head when existing element is added to the list", () => {

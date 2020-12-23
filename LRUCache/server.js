@@ -1,4 +1,4 @@
-const net = require("net");
+const http = require("http");
 const LRUCache = require("./LRUCache");
 
 const PORT = process.env.PORT || 3000;
@@ -6,69 +6,53 @@ const HOSTNAME = process.env.HOSTNAME || "127.0.0.1";
 const CACHE_SIZE = process.env.CACHE_SIZE || 1000000;
 const lruCache = LRUCache(CACHE_SIZE);
 
-const writeSuccess = (socket, data) => {
-  socket.write(
-    JSON.stringify({
-      type: "SUCCESS",
-      data,
-    })
-  );
-};
-
-const writeError = (socket, message) => {
-  socket.write(
-    JSON.stringify({
-      message: message || "Operational error",
-      type: "ERROR",
-    })
-  );
-};
-
-const handlePut = (data = {}, socket) => {
+const handlePut = (data = {}) => {
   const key = data.key;
   const value = data.value;
 
   if (!key || !value) {
-    writeError(socket, "Format not proper.");
+    throw new Error("Format not proper.");
   } else {
     lruCache.put(key, value);
-    writeSuccess(socket, null);
   }
 };
 
-const handleGet = (data = {}, socket) => {
-  const key = data.key;
-
+const handleGet = (key) => {
   if (!key) {
-    writeError(socket, "Format not proper.");
+    throw new Error("Format not proper.");
   } else {
-    const value = lruCache.get(key);
-    writeSuccess(socket, { value });
+    return lruCache.get(key);
   }
 };
 
-const connectionListener = (socket) => {
-  socket.on("data", (socketData) => {
-    try {
-      const dataJson = JSON.parse(socketData);
-      const data = dataJson.data;
-      const type = dataJson.type;
-
-      if (type === "PUT") {
-        handlePut(data, socket);
-      } else if (type === "GET") {
-        handleGet(data, socket);
-      } else {
-        writeError(socket, "Unrecognized type. Only GET and PUT supported.");
+const server = http.createServer(async (request, response) => {
+  if (request.method === "POST") {
+    let body = "";
+    request.on("data", (data) => (body += data));
+    request.on("end", async () => {
+      try {
+        await handlePut(JSON.parse(body));
+        response.writeHead(200, { "Content-Type": "text/json" });
+        response.end(JSON.stringify({ type: "success" }));
+      } catch (error) {
+        response.writeHead(500, { "Content-Type": "text/json" });
+        response.end(
+          JSON.stringify({ type: "failure", message: error.message })
+        );
       }
+    });
+  } else {
+    const key = request.url.split("/")[1];
+    try {
+      const value = await handleGet(key);
+      response.writeHead(200, { "Content-Type": "text/json" });
+      response.end(JSON.stringify({ type: "success", value }));
     } catch (error) {
-      writeError(socket, error.message);
+      response.writeHead(500, { "Content-Type": "text/json" });
+      response.end(JSON.stringify({ type: "failure", message: error.message }));
     }
-  });
-};
-
-const server = net.createServer(connectionListener);
-
-server.listen(PORT, HOSTNAME, () => {
-  console.log("opened server on", server.address());
+  }
 });
+
+server.listen(PORT, HOSTNAME);
+console.log(`Listening at http://${HOSTNAME}:${PORT}`);

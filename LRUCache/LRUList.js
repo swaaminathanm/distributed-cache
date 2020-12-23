@@ -53,6 +53,13 @@ class LRUList {
       return removedValue;
     }
 
+    if (this.getSize() <= 1) {
+      this.head = null;
+      this.tail = null;
+      this.size -= 1;
+      return;
+    }
+
     if (!node || this._isLastNode(node)) {
       const last = this.tail;
       const newLastNode = last.previous;
@@ -82,10 +89,15 @@ class LRUList {
   }
 
   _addNodeToHead(node) {
-    node.previous = null;
-    node.next = this.head;
-    this.head.previous = node;
-    this.head = node;
+    if (this.isEmpty()) {
+      this.head = node;
+      this.tail = node;
+    } else {
+      node.previous = null;
+      node.next = this.head;
+      this.head.previous = node;
+      this.head = node;
+    }
   }
 
   _getNode(value) {
