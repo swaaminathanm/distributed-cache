@@ -4,4 +4,8 @@ module.exports = class Node {
     this.key = key;
     this.label = label;
   }
+
+  toString() {
+    return `URL: ${this.domain}; LABEL: ${this.label}`;
+  }
 };

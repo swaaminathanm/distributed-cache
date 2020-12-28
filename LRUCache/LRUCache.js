@@ -4,6 +4,7 @@ const LRUList = require("./LRUList");
 module.exports = (cacheSize) => {
   const lruList = new LRUList();
   const cacheMap = {};
+  const removeCountWhenFull = Math.ceil(cacheSize * 0.3);
 
   const isCacheFull = () => {
     return Object.keys(cacheMap).length >= cacheSize;
@@ -28,9 +29,11 @@ module.exports = (cacheSize) => {
   const put = (key, value) => {
     if (isValid(value)) {
       if (isCacheFull()) {
-        const removedKey = lruList.removeTail();
-        if (removedKey) {
-          delete cacheMap[removedKey];
+        for (let i = 0; i < removeCountWhenFull; i++) {
+          const removedKey = lruList.removeTail();
+          if (removedKey) {
+            delete cacheMap[removedKey];
+          }
         }
       }
       cacheMap[key] = transform(value);

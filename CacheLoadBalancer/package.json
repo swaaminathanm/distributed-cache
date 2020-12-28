@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.21.1",
     "crc-32": "^1.2.0"
   },
   "devDependencies": {
