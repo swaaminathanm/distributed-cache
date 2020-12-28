@@ -17,7 +17,7 @@ spec:
           image: swaminathanmuthuveerappan/lru_cache_load_balancer:1.0
           env:
             - name: CACHE_SERVERS
-              value: "http://cache-0.cache.default.svc.cluster.local:8080 http://cache-1.cache.default.svc.cluster.local:8080 http://cache-2.cache.default.svc.cluster.local:8080"
+              value: "http://cache-0.cache.default.svc.cluster.local:8080 http://cache-1.cache.default.svc.cluster.local:8080 http://cache-2.cache.default.svc.cluster.local:8080 http://cache-3.cache.default.svc.cluster.local:8080"
           ports:
             - containerPort: 8081
 ---

@@ -21,7 +21,7 @@ spec:
     matchLabels:
       app: cache
   serviceName: "cache"
-  replicas: 3
+  replicas: 4
   template:
     metadata:
       labels:
